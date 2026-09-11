@@ -4,6 +4,9 @@ test("core showroom routes and conversion are available", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /curadoria privada/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /entrar na comunidade/i }).first()).toHaveAttribute("href", /chat\.whatsapp\.com/);
+  await expect(page.locator("main.home-gradient")).toHaveCSS("background-image", /linear-gradient/);
+  await expect(page.locator(".manifesto")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(page.locator(".final-cta")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
 
   await page.goto("/collection");
   await expect(page.locator("header.site-header")).toHaveClass(/site-header--light/);
