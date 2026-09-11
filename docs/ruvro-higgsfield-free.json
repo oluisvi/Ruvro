@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-09-11",
+  "selectedPriority": "detail",
+  "reason": "The detail supports the curator's attention to materials; the hero already has a code timeline.",
+  "jobId": "2bfb9763-037f-471b-8e62-fe3e0abf5164",
+  "status": "queued",
+  "request": {
+    "model": "hf_mult_motion_control",
+    "resolution": "720p",
+    "count": 1,
+    "use_free_gens": true,
+    "medias": [
+      {
+        "role": "image",
+        "value": "24436b88-a9f0-4fd1-af59-c6275356d239"
+      },
+      {
+        "role": "video",
+        "value": "8ab8824f-b738-4477-8aa7-7198bcd24777"
+      }
+    ],
+    "prompt": "Transfer only the extremely restrained camera approach and soft neutral light movement of the driving video to this exact reference watch macro. Match the driving clip timing: half-second steady opening, very slow 2.5 percent approach to the bezel and dial, steady final half-second. This is a private watch curator's editorial study, not an advertisement. Keep the same watch, dark grey dial, unbranded appearance, every index, hand position, crown and metal geometry perfectly consistent. The watch itself remains still, no ticking, no hand movement, no orbit, no morphing or added details. Preserve the lighting quality and photographic surface texture. No added text, logos, effects, particles or new objects. Silent."
+  },
+  "guide": {
+    "mediaId": "8ab8824f-b738-4477-8aa7-7198bcd24777",
+    "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J2yQlFFuNzuhRjpUky4CO6TXpa/8ab8824f-b738-4477-8aa7-7198bcd24777.mp4",
+    "duration": 4,
+    "width": 960,
+    "height": 720,
+    "bytes": 581753,
+    "origin": "Authored from existing demonstration image in Higgsfield sandbox using Pillow and FFmpeg; motion reference only, not a generative result."
+  },
+  "otherFreeGeneration": "Viral preserved: inspected effects do not fit the brand.",
+  "paidCreditsRequested": 0
+}

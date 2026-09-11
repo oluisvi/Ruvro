@@ -30,3 +30,44 @@ test("reduced motion keeps primary actions visible", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("link", { name: /explorar a curadoria/i }).first()).toBeVisible();
 });
+
+test("motion responds to preference changes and keyboard focus", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const card = page.locator(".watch-card").first();
+  await card.locator("a").focus();
+  await expect(card).toHaveCSS("opacity", "1");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator("body")).not.toHaveClass(/motion-ready/);
+  await expect(page.locator(".hero-timeline")).not.toHaveAttribute("data-stage");
+  await expect(page.locator(".final-cta .button")).toHaveCSS("opacity", "1");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect(page.locator("body")).toHaveClass(/motion-ready/);
+  await expect(card).toHaveCSS("opacity", "1");
+});
+
+test("compact hero separates copy, imagery and disclosure", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.locator(".hero-sticky")).toHaveCSS("position", "relative");
+  await expect(page.locator(".hero-demo")).toBeVisible();
+  const copy = await page.locator(".hero-copy").boundingBox();
+  const watch = await page.locator(".hero-watch").boundingBox();
+  expect(copy).not.toBeNull();
+  expect(watch!.y).toBeGreaterThanOrEqual(copy!.y + copy!.height);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(page.locator(".hero-sticky")).toHaveCSS("position", "relative");
+  await expect(page.locator(".hero-demo")).toBeVisible();
+});
+
+test("essential content and native menu work without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator(".final-cta .button")).toHaveCSS("opacity", "1");
+  await expect(page.locator(".watch-card").first()).toHaveCSS("opacity", "1");
+  await page.getByRole("button", { name: "Menu" }).click();
+  await expect(page.getByRole("navigation", { name: "Navegação móvel" })).toBeVisible();
+  await context.close();
+});

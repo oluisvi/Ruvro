@@ -1,125 +1,63 @@
-"use client";
+﻿"use client";
 
 import { usePathname } from "next/navigation";
 import { useLayoutEffect } from "react";
 
+// Reveal units of reading, never primary actions or entire tall sections.
 const REVEAL_SELECTORS = [
-  ".manifesto > .section-kicker",
-  ".manifesto > h2",
-  ".manifesto > p:last-child",
-  ".section-heading > div",
-  ".section-heading > p",
-  ".featured > .dark-link",
-  ".detail-copy > .section-kicker",
-  ".detail-copy > h2",
-  ".detail-copy > p",
-  ".detail-lines > span",
-  ".private-scene > div > .section-kicker",
-  ".private-scene > div > h2",
-  ".private-scene > div > p",
-  ".private-scene > div > a",
-  ".private-scene > aside",
-  ".founders > .section-kicker",
-  ".founder-layout > h2",
-  ".founder-layout > div",
-  ".final-cta > .section-kicker",
-  ".final-cta > h2",
-  ".final-cta > a",
-  ".page-intro > div",
-  ".page-intro > p",
-  ".page-intro > .page-lede",
-  ".page-back-link",
-  ".watch-detail-copy > .section-kicker",
-  ".watch-detail-copy > h1",
-  ".watch-detail-copy > p",
-  ".watch-detail-copy > .fact-list",
-  ".watch-detail-copy > a",
+  ".manifesto > h2", ".section-heading", ".watch-card",
+  ".detail-copy", ".founder-layout > h2", ".final-cta > h2",
 ].join(",");
-
-const PROGRESS_SELECTORS = [".detail-scene", ".private-scene", ".final-cta"];
-
-function clamp(value: number) {
-  return Math.min(1, Math.max(0, value));
-}
 
 export function SiteMotion() {
   const pathname = usePathname();
 
   useLayoutEffect(() => {
-    const body = document.body;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const revealNodes = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SELECTORS));
-    const cards = Array.from(document.querySelectorAll<HTMLElement>(".watch-card"));
-
-    revealNodes.forEach((node) => {
-      node.dataset.motion = "reveal";
-    });
-
-    cards.forEach((card, index) => {
-      card.dataset.motion = "reveal";
-      card.style.setProperty("--motion-order", String(index % 3));
-    });
-
-    if (reduceMotion) {
-      [...revealNodes, ...cards].forEach((node) => {
-        node.dataset.motionState = "visible";
-      });
-      body.classList.remove("motion-ready");
-      return;
-    }
-
-    body.classList.add("motion-ready");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
+    if (!window.matchMedia || !("IntersectionObserver" in window)) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SELECTORS));
+    let observer: IntersectionObserver | undefined;
+    const reveal = (node: HTMLElement) => {
+      node.dataset.motionState = "visible";
+      observer?.unobserve(node);
+    };
+    const configure = () => {
+      observer?.disconnect();
+      if (preference.matches) {
+        nodes.forEach(reveal);
+        document.body.classList.remove("motion-ready");
+        return;
+      }
+      observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const node = entry.target as HTMLElement;
-          node.dataset.motionState = "visible";
-          observer.unobserve(node);
+          if (entry.isIntersecting) reveal(entry.target as HTMLElement);
         });
-      },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.08 },
-    );
-
-    [...revealNodes, ...cards].forEach((node) => observer.observe(node));
-
-    const progressNodes = PROGRESS_SELECTORS.flatMap((selector) =>
-      Array.from(document.querySelectorAll<HTMLElement>(selector)),
-    );
-
-    let frame = 0;
-    const updateProgress = () => {
-      frame = 0;
-      const viewport = window.innerHeight;
-
-      progressNodes.forEach((node) => {
-        const rect = node.getBoundingClientRect();
-        const progress = clamp((viewport - rect.top) / Math.max(viewport + rect.height, 1));
-        node.style.setProperty("--scene-progress", progress.toFixed(4));
+      }, { threshold: 0, rootMargin: "0px 0px -24px 0px" });
+      nodes.forEach((node) => {
+        node.dataset.motion = "reveal";
+        // Initial viewport and restored positions must not flash or wait.
+        if (node.getBoundingClientRect().top < innerHeight || node.contains(document.activeElement)) reveal(node);
+        if (node.dataset.motionState !== "visible") observer?.observe(node);
       });
+      document.body.classList.add("motion-ready");
     };
-
-    const onScroll = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateProgress);
+    const onFocus = (event: FocusEvent) => {
+      if (!(event.target instanceof Element)) return;
+      const node = event.target.closest<HTMLElement>('[data-motion="reveal"]');
+      if (node) reveal(node);
     };
-
-    updateProgress();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-
+    configure();
+    preference.addEventListener("change", configure);
+    document.addEventListener("focusin", onFocus);
     return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
-      body.classList.remove("motion-ready");
-      [...revealNodes, ...cards].forEach((node) => {
+      observer?.disconnect();
+      preference.removeEventListener("change", configure);
+      document.removeEventListener("focusin", onFocus);
+      document.body.classList.remove("motion-ready");
+      nodes.forEach((node) => {
         delete node.dataset.motion;
         delete node.dataset.motionState;
-        node.style.removeProperty("--motion-order");
       });
-      progressNodes.forEach((node) => node.style.removeProperty("--scene-progress"));
     };
   }, [pathname]);
 

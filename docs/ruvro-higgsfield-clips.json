@@ -1,0 +1,106 @@
+{
+  "status": "blocked_by_higgsfield_plan",
+  "checkedAt": "2026-09-11",
+  "purpose": "Ruvro & Co landing page — demonstration artwork only; no real inventory claims.",
+  "source": {
+    "path": "public/media/hero-watch.png",
+    "transport": "Next.js optimized WebP derivative at original 1024x1536 resolution, reconstructed as PNG in Higgsfield sandbox",
+    "mediaId": "ea05f367-dfd5-4456-96e2-cc36c0183a4b",
+    "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J2yQlFFuNzuhRjpUky4CO6TXpa/ea05f367-dfd5-4456-96e2-cc36c0183a4b.png"
+  },
+  "detailReference": {
+    "mediaId": "24436b88-a9f0-4fd1-af59-c6275356d239",
+    "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J2yQlFFuNzuhRjpUky4CO6TXpa/24436b88-a9f0-4fd1-af59-c6275356d239.png",
+    "crop": [
+      64,
+      304,
+      1024,
+      1024
+    ]
+  },
+  "preferredRequests": [
+    {
+      "index": 0,
+      "params": {
+        "model": "seedance_2_5",
+        "mode": "omni_reference",
+        "duration": 4,
+        "resolution": "1080p",
+        "generate_audio": false,
+        "aspect_ratio": "4:3",
+        "medias": [
+          {
+            "role": "start_image",
+            "value": "24436b88-a9f0-4fd1-af59-c6275356d239"
+          }
+        ],
+        "prompt": "Four-second macro product photograph brought subtly to life. A narrow, soft, low-intensity studio reflection slowly passes over the existing polished bezel and brushed dial, letting the viewer notice the contrast of these two finishes. Reflective light travels only once from upper left toward right, then settles. The entire dial stays legible and unchanged. This is an editorial cinemagraph for Ruvro & Co, a private watch curator. Use exactly the supplied reference as first frame. Camera completely locked: no zoom, pan, orbit, shake or reframing. Watch remains physically stationary. Preserve its exact dial, every index, hand positions, crown, bracelet links, proportions and existing unbranded appearance across ALL frames. Absolutely no new lettering, logo, graphics, particles, sparks, smoke, hands or other objects. No ticking or hand movement. Light must remain soft neutral white, never gold. Start and end with a stable half-second hold. Maintain fine photographic detail without morphing, flicker, overexposure or a white wipe. Silent."
+      }
+    },
+    {
+      "index": 1,
+      "params": {
+        "model": "seedance_2_5",
+        "mode": "omni_reference",
+        "duration": 4,
+        "resolution": "1080p",
+        "generate_audio": false,
+        "aspect_ratio": "auto",
+        "medias": [
+          {
+            "role": "start_image",
+            "value": "ea05f367-dfd5-4456-96e2-cc36c0183a4b"
+          }
+        ],
+        "prompt": "Four-second portrait of the full steel watch, framing exactly as the reference. One large softbox reflection moves very gently over the steel bracelet and outer case, from upper left to lower right, revealing brushed and polished texture. Preserve the original dark charcoal background and full watch silhouette with identical margins; the watch never rotates. Subtle reflected light is the only movement. This is an editorial cinemagraph for Ruvro & Co, a private watch curator. Use exactly the supplied reference as first frame. Camera completely locked: no zoom, pan, orbit, shake or reframing. Watch remains physically stationary. Preserve its exact dial, every index, hand positions, crown, bracelet links, proportions and existing unbranded appearance across ALL frames. Absolutely no new lettering, logo, graphics, particles, sparks, smoke, hands or other objects. No ticking or hand movement. Light must remain soft neutral white, never gold. Start and end with a stable half-second hold. Maintain fine photographic detail without morphing, flicker, overexposure or a white wipe. Silent."
+      }
+    }
+  ],
+  "fallback": {
+    "detail": {
+      "model": "kling3_0_turbo",
+      "duration": 3,
+      "resolution": "720p",
+      "aspect_ratio": "1:1",
+      "medias": [
+        {
+          "role": "start_image",
+          "value": "24436b88-a9f0-4fd1-af59-c6275356d239"
+        }
+      ],
+      "prompt": "Three-second macro product photograph brought subtly to life. A narrow, soft, low-intensity studio reflection slowly passes over the existing polished bezel and brushed dial, letting the viewer notice the contrast of these two finishes. Reflective light travels only once from upper left toward right, then settles. The entire dial stays legible and unchanged. This is an editorial cinemagraph for Ruvro & Co, a private watch curator. Use exactly the supplied reference as first frame. Camera completely locked: no zoom, pan, orbit, shake or reframing. Watch remains physically stationary. Preserve its exact dial, every index, hand positions, crown, bracelet links, proportions and existing unbranded appearance across ALL frames. Absolutely no new lettering, logo, graphics, particles, sparks, smoke, hands or other objects. No ticking or hand movement. Light must remain soft neutral white, never gold. Start and end with a stable half-second hold. Maintain fine photographic detail without morphing, flicker, overexposure or a white wipe. Silent."
+    },
+    "hero": {
+      "model": "kling3_0_turbo",
+      "duration": 3,
+      "resolution": "720p",
+      "aspect_ratio": "9:16",
+      "medias": [
+        {
+          "role": "start_image",
+          "value": "ea05f367-dfd5-4456-96e2-cc36c0183a4b"
+        }
+      ],
+      "prompt": "Three-second portrait of the full steel watch, framing exactly as the reference. One large softbox reflection moves very gently over the steel bracelet and outer case, from upper left to lower right, revealing brushed and polished texture. Preserve the original dark charcoal background and full watch silhouette with identical margins; the watch never rotates. Subtle reflected light is the only movement. This is an editorial cinemagraph for Ruvro & Co, a private watch curator. Use exactly the supplied reference as first frame. Camera completely locked: no zoom, pan, orbit, shake or reframing. Watch remains physically stationary. Preserve its exact dial, every index, hand positions, crown, bracelet links, proportions and existing unbranded appearance across ALL frames. Absolutely no new lettering, logo, graphics, particles, sparks, smoke, hands or other objects. No ticking or hand movement. Light must remain soft neutral white, never gold. Start and end with a stable half-second hold. Maintain fine photographic detail without morphing, flicker, overexposure or a white wipe. Silent."
+    }
+  },
+  "preflight": {
+    "seedance": {
+      "creditsPerClip": 36,
+      "totalCredits": 72,
+      "requiredPlan": "plus"
+    },
+    "klingTurbo": {
+      "creditsPerClip": 4.5,
+      "totalCredits": 9,
+      "requiredPlan": "basic"
+    }
+  },
+  "submission": {
+    "jobsCreated": 0,
+    "errors": [
+      "Seedance 2.5: Requires plus plan or higher.",
+      "Kling 3.0 Turbo: Requires basic plan or higher."
+    ]
+  }
+}
