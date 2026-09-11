@@ -83,6 +83,25 @@ a:focus-visible, summary:focus-visible, button:focus-visible {
 .watch-image-wrap:focus-visible .watch-card-image { transform:scale(1.025); }
 .watch-card-image { transition:transform 400ms var(--motion-ease); }
 
+/* A quiet, continuous display rail for the home curation. */
+.watch-rail { min-width:0; }
+.watch-rail-toolbar { display:flex; justify-content:space-between; align-items:center; margin:0 0 1.5rem; border-top:1px solid currentColor; padding-top:.75rem; }
+.watch-rail-toolbar p,
+.rail-motion-control { margin:0; font-size:.58rem; text-transform:uppercase; letter-spacing:.16em; }
+.rail-motion-control { display:inline-flex; align-items:center; gap:.55rem; min-height:44px; border:0; padding:.5rem; background:transparent; color:inherit; cursor:pointer; }
+.rail-motion-control svg { width:.85rem; height:.85rem; }
+.watch-rail-viewport { overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:none; margin-inline:calc(var(--gutter) * -1); padding-inline:var(--gutter); }
+.watch-rail-viewport::-webkit-scrollbar { display:none; }
+.watch-rail-track { display:flex; width:max-content; gap:1.5rem; }
+.watch-rail-set { display:flex; gap:1.5rem; }
+.watch-card--compact { flex:0 0 clamp(17.5rem,22vw,21.25rem); width:clamp(17.5rem,22vw,21.25rem); }
+.watch-card--compact .watch-image-wrap { aspect-ratio:4/5; }
+.watch-card--compact .watch-card-image { object-fit:cover; }
+.watch-card--compact .watch-card-meta h3 { font-size:clamp(1.35rem,1.8vw,1.8rem); }
+.watch-card--compact .watch-card-meta { padding-bottom:1rem; }
+.watch-rail[data-autoplay="paused"] .watch-rail-viewport { scroll-snap-type:x proximity; }
+.watch-rail[data-autoplay="paused"] .watch-card--compact { scroll-snap-align:start; }
+
 /* Progressive enhancement: content is visible without JavaScript. */
 .motion-ready [data-motion="reveal"] {
   opacity:0; transform:translateY(14px);
@@ -153,6 +172,9 @@ a:focus-visible, summary:focus-visible, button:focus-visible {
   .motion-ready [data-motion="reveal"][data-motion-state="visible"],
   .motion-ready [data-motion="reveal"]:focus-within { transform:none; }
   .mobile-nav { max-height:calc(100dvh - 5rem); }
+  .watch-card--compact { flex-basis:min(76vw,18rem); width:min(76vw,18rem); }
+  .watch-rail-track, .watch-rail-set { gap:1rem; }
+  .watch-rail-toolbar { margin-bottom:1rem; }
 }
 @media(prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }
@@ -169,6 +191,8 @@ a:focus-visible, summary:focus-visible, button:focus-visible {
   .page-back-link:hover span, .watch-card .watch-image-wrap:hover .watch-card-image,
   .watch-image-wrap:focus-visible .watch-card-image { transform:none; }
   .mobile-menu[open] .mobile-nav { animation:none; }
+  .watch-rail-viewport { scroll-snap-type:x mandatory; }
+  .watch-card--compact { scroll-snap-align:start; }
 }
 @media(prefers-reduced-motion:reduce) and (max-width:900px),
        (prefers-reduced-motion:reduce) and (max-height:700px) {

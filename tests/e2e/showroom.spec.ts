@@ -32,6 +32,20 @@ test("reduced motion keeps primary actions visible", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.getByRole("link", { name: /explorar a curadoria/i }).first()).toBeVisible();
+  const rail = page.getByRole("region", { name: "Curadoria em destaque" });
+  await expect(rail).toHaveAttribute("data-autoplay", "paused");
+  await expect(rail.locator('[data-rail-set="clone"] a')).toHaveCount(0);
+});
+
+test("featured curation is an accessible pausable rail", async ({ page }) => {
+  await page.goto("/");
+  const rail = page.getByRole("region", { name: "Curadoria em destaque" });
+  await expect(rail).toBeVisible();
+  const control = rail.getByRole("button", { name: /pausar movimento/i });
+  await expect(control).toBeVisible();
+  await control.click();
+  await expect(rail).toHaveAttribute("data-autoplay", "paused");
+  await expect(rail.getByRole("button", { name: /reproduzir movimento/i })).toBeVisible();
 });
 
 test("motion responds to preference changes and keyboard focus", async ({ page }) => {
