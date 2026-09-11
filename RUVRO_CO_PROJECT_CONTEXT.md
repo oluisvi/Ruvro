@@ -36,7 +36,7 @@ A experiência deve ser memorável pela sofisticação da execução e pela form
 
 ## 2.1 Estado geral
 
-O projeto está em fase de **direção estratégica / discovery avançado / preparação de Creative Direction**, com referências e princípios já bem estabelecidos, mas ainda sem implementação final confirmada neste contexto.
+O projeto possui um **MVP de showroom digital implementado e publicado**, com direção estratégica, referências e princípios consolidados. A evolução atual acontece por deltas sobre o repositório existente.
 
 Já existe um Discovery extenso consolidando informações públicas, inferências estratégicas, oportunidades e lacunas de negócio.
 
@@ -620,13 +620,7 @@ O catálogo deve idealmente ser administrável sem depender de deploy para cada 
 
 ## 13.2 Importante sobre “tecnologias usadas”
 
-Até o momento, no material disponível deste projeto, **não há confirmação de um repositório existente nem de uma stack já implementada**.
-
-Portanto:
-
-- não assumir Next.js, React, Vercel, Sanity, Supabase, Shopify ou qualquer backend específico;
-- ao receber o repositório, inspecionar `package.json`, README, `AGENTS.md`, estrutura de rotas, dependências e convenções antes de definir qualquer coisa;
-- preservar arquitetura já funcional quando ela existir.
+O projeto está implementado em **Next.js 16.3.4, React 19.3 e TypeScript**, com CSS próprio, testes Vitest/Playwright e deploy na Vercel. Não há CMS ou backend confirmado. Preservar a arquitetura funcional e consultar a documentação local da versão instalada antes de mudanças de framework.
 
 ---
 
@@ -1068,4 +1062,15 @@ Este arquivo deve ser atualizado sempre que houver uma decisão relevante sobre:
 - deploy;
 - integrações;
 - assets aprovados.
+
+---
+
+# 28. DECISÕES IMPLEMENTADAS — MOTION E CURADORIA
+
+- Header e hero/banner principal são áreas protegidas; esta rodada não altera sua composição, imagem ou timeline de scroll.
+- A linguagem de movimento abaixo do hero é de **precisão silenciosa**: hierarquia, deslocamentos curtos e microinterações, sem scroll-jacking ou dependência adicional.
+- Imagens secundárias usam escala editorial mais contida; a coleção completa permanece estável e sem autoplay.
+- A mini curadoria da home usa um expositor horizontal automático, pausável e acessível; com movimento reduzido, torna-se navegação horizontal manual.
+- Fotografias fornecidas a partir do Instagram podem funcionar como registros visuais reais, mas preço, disponibilidade, condição, garantia e procedência não devem ser inferidos sem confirmação atual da Ruvro.
+- Assets raster devem ser exibidos dentro de sua resolução útil, sem upscale destrutivo, usando carregamento responsivo e dimensões estáveis.
 

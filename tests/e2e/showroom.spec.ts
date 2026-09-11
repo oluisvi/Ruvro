@@ -10,6 +10,8 @@ test("core showroom routes and conversion are available", async ({ page }) => {
 
   await page.goto("/collection");
   await expect(page.locator("header.site-header")).toHaveClass(/site-header--light/);
+  await expect(page.locator(".page-intro > *").first()).toHaveAttribute("data-motion", "reveal");
+  await expect(page.locator(".site-header")).not.toHaveAttribute("data-motion");
   await expect(page.getByRole("link", { name: /voltar ao início/i })).toBeVisible();
   await page.getByRole("link", { name: /voltar ao início/i }).click();
   await expect(page).toHaveURL(/\/$/);
@@ -31,6 +33,7 @@ test("mobile navigation opens with keyboard-operable links", async ({ page, isMo
 test("reduced motion keeps primary actions visible", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await expect(page.locator(".hero-timeline")).not.toHaveAttribute("data-motion");
   await expect(page.getByRole("link", { name: /explorar a curadoria/i }).first()).toBeVisible();
   const rail = page.getByRole("region", { name: "Curadoria em destaque" });
   await expect(rail).toHaveAttribute("data-autoplay", "paused");

@@ -106,9 +106,40 @@ a:focus-visible, summary:focus-visible, button:focus-visible {
 .motion-ready [data-motion="reveal"] {
   opacity:0; transform:translateY(14px);
   transition:opacity var(--motion-reveal) var(--motion-ease), transform var(--motion-reveal) var(--motion-ease);
+  transition-delay:calc(var(--motion-order, 0) * 55ms);
 }
 .motion-ready [data-motion="reveal"][data-motion-state="visible"] { opacity:1; transform:none; }
 .motion-ready [data-motion="reveal"]:focus-within { opacity:1; transform:none; transition:none; }
+
+/* Secondary imagery is editorially framed instead of filling the viewport. */
+.page-shell > .watch-grid {
+  grid-template-columns:repeat(auto-fit,minmax(13.75rem,18.125rem));
+  justify-content:center;
+  max-width:74rem;
+  margin-inline:auto;
+  gap:clamp(1.25rem,2.5vw,2.25rem);
+}
+.home-gradient .detail-scene {
+  grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
+  align-items:center;
+  gap:clamp(2rem,5vw,6rem);
+  padding:clamp(3rem,6vw,6rem) var(--gutter);
+}
+.home-gradient .detail-image {
+  width:100%;
+  min-height:min(68vh,48rem);
+  max-height:48rem;
+}
+.watch-detail {
+  grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+  align-items:start;
+}
+.watch-detail-media {
+  top:8rem;
+  height:min(72vh,48rem);
+  margin-bottom:6rem;
+}
+.watch-detail-media img { object-fit:contain; }
 
 /* The watch owns the only scroll timeline. No animated section backgrounds. */
 .hero-timeline { --hero-progress:0; height:180vh; }
@@ -163,6 +194,10 @@ a:focus-visible, summary:focus-visible, button:focus-visible {
   .hero-light { transform:none; opacity:.5; }
   .hero-state, .scroll-cue { display:none; }
   .hero-demo { display:block; position:relative; right:auto; bottom:auto; margin:1rem 0 0; text-align:center; line-height:1.6; }
+  .home-gradient .detail-scene { grid-template-columns:1fr; padding-block:4rem; }
+  .home-gradient .detail-image { min-height:46svh; max-height:32rem; }
+  .watch-detail { grid-template-columns:1fr; }
+  .watch-detail-media { position:relative; top:auto; height:56svh; margin-bottom:0; }
 }
 @media(max-width:600px) {
   .hero-sticky { padding-top:7rem; }
@@ -175,6 +210,9 @@ a:focus-visible, summary:focus-visible, button:focus-visible {
   .watch-card--compact { flex-basis:min(76vw,18rem); width:min(76vw,18rem); }
   .watch-rail-track, .watch-rail-set { gap:1rem; }
   .watch-rail-toolbar { margin-bottom:1rem; }
+  .page-shell > .watch-grid { grid-template-columns:minmax(0,min(100%,20rem)); }
+  .home-gradient .detail-image { min-height:44svh; }
+  .watch-detail-media { height:54svh; }
 }
 @media(prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }

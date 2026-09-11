@@ -5,8 +5,11 @@ import { useLayoutEffect } from "react";
 
 // Reveal units of reading, never primary actions or entire tall sections.
 const REVEAL_SELECTORS = [
-  ".manifesto > h2", ".section-heading", ".watch-card",
-  ".detail-copy", ".founder-layout > h2", ".final-cta > h2",
+  ".manifesto > h2", ".manifesto > p:last-child", ".section-heading",
+  ".watch-rail", ".detail-copy > *", ".private-scene > *",
+  ".founder-layout > *", ".final-cta > *", ".page-intro > *",
+  ".page-shell > .page-back-link", ".page-shell > .watch-grid > .watch-card",
+  ".watch-detail-copy > *", ".legal-copy > *", ".site-footer > *",
 ].join(",");
 
 export function SiteMotion() {
@@ -33,8 +36,9 @@ export function SiteMotion() {
           if (entry.isIntersecting) reveal(entry.target as HTMLElement);
         });
       }, { threshold: 0, rootMargin: "0px 0px -24px 0px" });
-      nodes.forEach((node) => {
+      nodes.forEach((node, index) => {
         node.dataset.motion = "reveal";
+        node.style.setProperty("--motion-order", String(index % 4));
         // Initial viewport and restored positions must not flash or wait.
         if (node.getBoundingClientRect().top < innerHeight || node.contains(document.activeElement)) reveal(node);
         if (node.dataset.motionState !== "visible") observer?.observe(node);
@@ -57,6 +61,7 @@ export function SiteMotion() {
       nodes.forEach((node) => {
         delete node.dataset.motion;
         delete node.dataset.motionState;
+        node.style.removeProperty("--motion-order");
       });
     };
   }, [pathname]);
