@@ -1,0 +1,2 @@
+import Link from "next/link";import { CommunityCta } from "@/components/common/CommunityCta";
+export default function NotFound(){return <main id="conteudo" className="page-shell page-dark"><p className="section-kicker">404</p><h1 className="page-title">Este tempo<br/>não está aqui.</h1><p className="page-lede">A página ou estudo que você procura não foi encontrado.</p><p><Link className="text-link" href="/collection">Explorar a curadoria</Link></p><CommunityCta inverse/></main>}

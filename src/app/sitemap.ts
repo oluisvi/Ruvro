@@ -1,0 +1,2 @@
+import type { MetadataRoute } from "next";import { watches } from "@/data/watches";
+export default function sitemap():MetadataRoute.Sitemap{const base=process.env.NEXT_PUBLIC_SITE_URL??"http://localhost:3000";return ["","/collection","/private","/about","/privacy","/terms",...watches.map(w=>`/watch/${w.slug}`)].map(url=>({url:`${base}${url}`,changeFrequency:"monthly" as const,priority:url===""?1:.7}))}

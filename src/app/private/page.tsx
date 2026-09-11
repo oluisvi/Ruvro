@@ -1,0 +1,3 @@
+import type { Metadata } from "next";import { CommunityCta } from "@/components/common/CommunityCta";
+export const metadata:Metadata={title:"Ruvro Private",description:"Acesso em primeira mão à curadoria privada Ruvro."};
+export default function PrivatePage(){return <main id="conteudo" className="page-shell page-dark"><div className="page-intro"><div><p className="section-kicker">Acesso reservado</p><h1 className="page-title">Ruvro<br/>Private</h1></div><div className="page-lede"><p>Acesso em primeira mão aos relógios, curadoria privada e oportunidades da Ruvro.</p><p>Os membros da comunidade ficam ocultos, preservando a discrição do espaço.</p><CommunityCta inverse/></div></div></main>}
