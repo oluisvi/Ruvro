@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { siteUrl } from "@/lib/site-url";
 import "@/styles/global.css";
 
 const display = Cormorant_Garamond({ subsets: ["latin"], variable: "--font-display", weight: ["400", "500", "600"], display: "swap" });
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(base), title: { default: "Ruvro & Co — Curadoria privada", template: "%s — Ruvro & Co" },
+  metadataBase: new URL(siteUrl), title: { default: "Ruvro & Co — Curadoria privada", template: "%s — Ruvro & Co" },
   description: "Curadoria privada e acesso em primeira mão para clientes e colecionadores de relógios.",
   openGraph: { title: "Ruvro & Co", description: "Curadoria privada. Acesso em primeira mão.", type: "website", locale: "pt_BR" },
 };
