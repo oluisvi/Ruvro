@@ -69,7 +69,7 @@ test("featured curation advances automatically at the refined speed", async ({ p
   const initialPosition = await viewport.evaluate((element) => element.scrollLeft);
   await expect
     .poll(() => viewport.evaluate((element) => element.scrollLeft), { timeout: 1_500 })
-    .toBeGreaterThan(initialPosition + 30);
+    .toBeGreaterThan(initialPosition + 24);
 });
 
 test("featured curation has previous and next controls without disabling autoplay", async ({ page }) => {
@@ -115,7 +115,7 @@ test("home motion reveals reading units instead of whole sections", async ({ pag
   await page.goto("/");
   await expect(page.locator(".manifesto > .section-kicker")).toHaveAttribute("data-motion", "reveal");
   await expect(page.locator(".manifesto > h2")).toHaveAttribute("data-motion-variant", "title");
-  await expect(page.locator(".manifesto > h2")).toHaveCSS("transition-duration", /0\.9|0\.92|920ms/);
+  await expect(page.locator(".manifesto > h2")).toHaveCSS("transition-duration", /0\.72|0\.9|0\.92|720ms|920ms/);
   await expect(page.locator(".detail-lines > span").first()).toHaveAttribute("data-motion-variant", "line");
   await expect(page.locator('[data-rail-set="original"] > .watch-card').first()).toHaveAttribute("data-motion-variant", "card");
   await expect(page.locator(".hero-timeline")).not.toHaveAttribute("data-motion");

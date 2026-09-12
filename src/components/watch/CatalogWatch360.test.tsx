@@ -36,4 +36,13 @@ describe("CatalogWatch360", () => {
     act(() => vi.advanceTimersByTime(10_000));
     expect(screen.getByText("01 / 04")).toBeInTheDocument();
   });
+
+  it("autorotates at the same cadence as the home reference", () => {
+    vi.useFakeTimers();
+    render(<CatalogWatch360 frames={frames} name="Relógio teste" alt="Relógio teste em vários ângulos" />);
+    const viewer = screen.getByRole("region", { name: /visualização 360/i });
+    expect(viewer).toHaveAttribute("data-autorotate", "running");
+    act(() => vi.advanceTimersByTime(1_150));
+    expect(screen.getByText("02 / 04")).toBeInTheDocument();
+  });
 });

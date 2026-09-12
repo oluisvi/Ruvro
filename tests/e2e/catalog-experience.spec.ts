@@ -5,6 +5,11 @@ test("home publishes six real curated cards and keeps the final CTA intact", asy
   const originals = page.locator('[data-rail-set="original"] > .watch-card');
   await expect(originals).toHaveCount(6);
   await expect(originals.first().getByRole("link")).toHaveAttribute("href", "/watch/vacheron-constantin-222");
+  const collectionCta = page.getByRole("link", { name: /ver toda a curadoria/i });
+  await expect(collectionCta).toHaveClass(/button-dark/);
+  const ctaBox = await collectionCta.boundingBox();
+  expect(ctaBox).not.toBeNull();
+  expect(Math.abs((ctaBox!.x + ctaBox!.width / 2) - (await page.evaluate(() => innerWidth / 2)))).toBeLessThan(2);
   const cta = page.locator(".final-cta");
   await expect(cta).toContainText("O tempo certo");
   await expect(cta.getByRole("img", { name: /curadoria ruvro/i })).toBeVisible();

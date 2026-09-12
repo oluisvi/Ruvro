@@ -2,3 +2,14 @@
 @media(max-width:900px){.catalog-detail__hero{grid-template-columns:1fr}.catalog-detail__media{min-height:70svh}.catalog-detail__copy{padding-top:5rem}.watch-gallery__lead{aspect-ratio:4/3!important}.final-cta__media{right:-8vw;width:68vw}}
 @media(max-width:600px){.catalog-detail{padding-top:5rem}.catalog-detail__media{min-height:68svh;padding:1rem}.catalog-360{width:min(100%,28rem);aspect-ratio:3/4}.catalog-360__head span:last-child{display:none}.catalog-detail__copy h1{font-size:3.8rem}.watch-gallery{grid-template-columns:1fr}.watch-gallery__lead{grid-column:auto;aspect-ratio:4/5!important}.watch-gallery figure{aspect-ratio:4/5}.final-cta__media{right:-28vw;top:8%;width:105vw;height:84%;opacity:.48}.final-cta__media:after{background:linear-gradient(90deg,#070807 10%,rgba(7,8,7,.45) 64%,transparent),linear-gradient(0deg,#070807 0,transparent 38%)}}
 @media(prefers-reduced-motion:reduce){.catalog-360__controls button{transition:none}}
+
+/* Catalog refinements aligned with the existing home 360 language. */
+.catalog-detail__media{background:transparent}
+.catalog-360{color:var(--ink)}
+.catalog-360__frame{object-fit:contain;opacity:0;transform:scale(.985);transition:opacity 320ms cubic-bezier(.4,0,.2,1),transform 680ms cubic-bezier(.16,1,.3,1)}
+.catalog-360__frame.is-active{opacity:1;transform:scale(1)}
+.catalog-360__controls button:hover{background:var(--ink);color:var(--porcelain)}
+.featured-curation-action{display:flex;justify-content:center;padding-top:clamp(2rem,4vw,4rem)}
+.page-shell>.watch-grid .watch-card-meta{height:9.5rem}
+@media(prefers-reduced-motion:reduce){.catalog-360__frame{transition:none}}
+@media(max-width:600px){.page-shell>.watch-grid .watch-card-meta{height:9rem}}
