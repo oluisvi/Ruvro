@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { siteUrl } from "@/lib/site-url";
 import "@/styles/global.css";
 import "@/styles/motion.css";
+import "@/styles/motion-enhancements.css";
 
 const display = Cormorant_Garamond({ subsets: ["latin"], variable: "--font-display", weight: ["400", "500", "600"], display: "swap" });
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });

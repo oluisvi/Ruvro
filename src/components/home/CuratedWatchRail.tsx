@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FocusEvent as ReactFocusEvent, type PointerEvent as ReactPointerEvent } from "react";
 import type { Watch } from "@/data/watches";
 import { WatchCard } from "@/components/watch/WatchCard";
+
+const AUTOPLAY_SPEED_PX_PER_MS = 0.028;
+const MANUAL_STEP_PAUSE_MS = 420;
 
 function MotionIcon({ paused }: { paused: boolean }) {
   return paused ? (
@@ -12,15 +15,23 @@ function MotionIcon({ paused }: { paused: boolean }) {
   );
 }
 
+function railGap(element: HTMLElement) {
+  const style = getComputedStyle(element);
+  return Number.parseFloat(style.columnGap || style.gap) || 0;
+}
+
 export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> }) {
   const regionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const firstSetRef = useRef<HTMLDivElement>(null);
+  const stepResumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [explicitPaused, setExplicitPaused] = useState(false);
-  const [interactionPaused, setInteractionPaused] = useState(false);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [focusPaused, setFocusPaused] = useState(false);
+  const [stepPaused, setStepPaused] = useState(false);
   const [visible, setVisible] = useState(true);
   const [reduced, setReduced] = useState(false);
-  const running = !explicitPaused && !interactionPaused && visible && !reduced;
+  const running = !explicitPaused && !hoverPaused && !focusPaused && !stepPaused && visible && !reduced;
 
   useEffect(() => {
     const region = regionRef.current;
@@ -39,6 +50,10 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
     return () => preference.removeEventListener("change", sync);
   }, []);
 
+  useEffect(() => () => {
+    if (stepResumeTimerRef.current) clearTimeout(stepResumeTimerRef.current);
+  }, []);
+
   useEffect(() => {
     if (!running) return;
     const viewport = viewportRef.current;
@@ -46,19 +61,41 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
     if (!viewport || !firstSet) return;
     let frame = 0;
     let previous = performance.now();
-    let position = viewport.scrollLeft;
     const tick = (now: number) => {
       const elapsed = Math.min(now - previous, 32);
       previous = now;
-      position += elapsed * 0.016;
-      const boundary = firstSet.offsetWidth + 24;
-      if (position >= boundary) position -= boundary;
+      const track = firstSet.parentElement;
+      const boundary = firstSet.offsetWidth + (track instanceof HTMLElement ? railGap(track) : 0);
+      let position = viewport.scrollLeft + elapsed * AUTOPLAY_SPEED_PX_PER_MS;
+      if (boundary > 0 && position >= boundary) position -= boundary;
       viewport.scrollLeft = position;
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [running]);
+
+  const stepRail = (direction: -1 | 1) => {
+    const viewport = viewportRef.current;
+    const firstSet = firstSetRef.current;
+    if (!viewport || !firstSet) return;
+    const track = firstSet.parentElement;
+    const boundary = firstSet.offsetWidth + (track instanceof HTMLElement ? railGap(track) : 0);
+    const firstCard = firstSet.querySelector<HTMLElement>(".watch-card");
+    const step = (firstCard?.getBoundingClientRect().width ?? Math.min(viewport.clientWidth * 0.8, 340)) + railGap(firstSet);
+    if (boundary <= 0 || step <= 0) return;
+
+    setStepPaused(true);
+    if (stepResumeTimerRef.current) clearTimeout(stepResumeTimerRef.current);
+
+    let current = viewport.scrollLeft % boundary;
+    if (current < 0) current += boundary;
+    if (direction < 0 && current < step) current += boundary;
+    viewport.scrollLeft = current;
+    viewport.scrollTo({ left: current + direction * step, behavior: reduced ? "auto" : "smooth" });
+
+    stepResumeTimerRef.current = setTimeout(() => setStepPaused(false), reduced ? 0 : MANUAL_STEP_PAUSE_MS);
+  };
 
   if (watches.length === 0) return null;
 
@@ -68,18 +105,34 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
       className="watch-rail"
       aria-label="Curadoria em destaque"
       data-autoplay={running ? "running" : "paused"}
-      onMouseEnter={() => setInteractionPaused(true)}
-      onMouseLeave={() => setInteractionPaused(false)}
-      onFocusCapture={() => setInteractionPaused(true)}
-      onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setInteractionPaused(false); }}
-      onPointerDown={() => setExplicitPaused(true)}
+      onMouseEnter={() => setHoverPaused(true)}
+      onMouseLeave={() => setHoverPaused(false)}
+      onFocusCapture={(event: ReactFocusEvent<HTMLElement>) => {
+        const target = event.target instanceof Element ? event.target : null;
+        setFocusPaused(!target?.closest(".watch-rail-toolbar"));
+      }}
+      onBlurCapture={(event: ReactFocusEvent<HTMLElement>) => {
+        const nextTarget = event.relatedTarget instanceof Node ? event.relatedTarget : null;
+        if (!event.currentTarget.contains(nextTarget)) setFocusPaused(false);
+      }}
+      onPointerDown={(event: ReactPointerEvent<HTMLElement>) => {
+        if (!(event.target instanceof Element) || !event.target.closest(".watch-rail-toolbar")) setExplicitPaused(true);
+      }}
     >
       <div className="watch-rail-toolbar">
         <p>Seleção em movimento</p>
-        <button type="button" className="rail-motion-control" onPointerDown={(event) => event.stopPropagation()} onClick={() => setExplicitPaused((value) => !value)} aria-label={explicitPaused ? "Reproduzir movimento" : "Pausar movimento"}>
-          <MotionIcon paused={explicitPaused} />
-          <span>{explicitPaused ? "Reproduzir" : "Pausar"}</span>
-        </button>
+        <div className="rail-controls" role="group" aria-label="Controles da curadoria">
+          <button type="button" className="rail-step-control rail-step-control--previous" onClick={() => stepRail(-1)} aria-label="Relógio anterior">
+            <span aria-hidden="true">←</span>
+          </button>
+          <button type="button" className="rail-step-control rail-step-control--next" onClick={() => stepRail(1)} aria-label="Próximo relógio">
+            <span aria-hidden="true">→</span>
+          </button>
+          <button type="button" className="rail-motion-control" onClick={() => setExplicitPaused((value) => !value)} aria-label={explicitPaused ? "Reproduzir movimento" : "Pausar movimento"}>
+            <MotionIcon paused={explicitPaused} />
+            <span>{explicitPaused ? "Reproduzir" : "Pausar"}</span>
+          </button>
+        </div>
       </div>
       <div className="watch-rail-viewport" ref={viewportRef}>
         <div className="watch-rail-track">

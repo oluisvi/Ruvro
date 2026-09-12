@@ -51,7 +51,7 @@ test("featured curation is an accessible pausable rail", async ({ page }) => {
   await expect(rail.getByRole("button", { name: /reproduzir movimento/i })).toBeVisible();
 });
 
-test("featured curation advances automatically while autoplay is running", async ({ page }) => {
+test("featured curation advances automatically at the refined speed", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   const rail = page.getByRole("region", { name: "Curadoria em destaque" });
@@ -62,8 +62,43 @@ test("featured curation advances automatically while autoplay is running", async
   const viewport = rail.locator(".watch-rail-viewport");
   const initialPosition = await viewport.evaluate((element) => element.scrollLeft);
   await expect
-    .poll(() => viewport.evaluate((element) => element.scrollLeft), { timeout: 2_000 })
-    .toBeGreaterThan(initialPosition + 5);
+    .poll(() => viewport.evaluate((element) => element.scrollLeft), { timeout: 1_500 })
+    .toBeGreaterThan(initialPosition + 30);
+});
+
+test("featured curation has previous and next controls without disabling autoplay", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const rail = page.getByRole("region", { name: "Curadoria em destaque" });
+  await rail.scrollIntoViewIfNeeded();
+  const viewport = rail.locator(".watch-rail-viewport");
+  const next = rail.getByRole("button", { name: /próximo relógio/i });
+  const previous = rail.getByRole("button", { name: /relógio anterior/i });
+  await expect(next).toBeVisible();
+  await expect(previous).toBeVisible();
+
+  await page.mouse.move(1, 1);
+  const beforeNext = await viewport.evaluate((element) => element.scrollLeft);
+  await next.click();
+  await expect.poll(() => viewport.evaluate((element) => element.scrollLeft)).toBeGreaterThan(beforeNext + 40);
+  await page.mouse.move(1, 1);
+  await expect(rail).toHaveAttribute("data-autoplay", "running");
+
+  const beforePrevious = await viewport.evaluate((element) => element.scrollLeft);
+  await previous.click();
+  await expect.poll(() => viewport.evaluate((element) => element.scrollLeft)).toBeLessThan(beforePrevious - 40);
+  await page.mouse.move(1, 1);
+  await expect(rail).toHaveAttribute("data-autoplay", "running");
+});
+
+test("home motion reveals reading units instead of whole sections", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  await expect(page.locator(".manifesto > .section-kicker")).toHaveAttribute("data-motion", "reveal");
+  await expect(page.locator(".manifesto > h2")).toHaveAttribute("data-motion-variant", "title");
+  await expect(page.locator(".detail-lines > span").first()).toHaveAttribute("data-motion-variant", "line");
+  await expect(page.locator('[data-rail-set="original"] > .watch-card').first()).toHaveAttribute("data-motion-variant", "card");
+  await expect(page.locator(".hero-timeline")).not.toHaveAttribute("data-motion");
 });
 
 test("motion responds to preference changes and keyboard focus", async ({ page }) => {
