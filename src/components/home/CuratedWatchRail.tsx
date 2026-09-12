@@ -31,7 +31,8 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
   }, []);
 
   useEffect(() => {
-    const preference = matchMedia("(prefers-reduced-motion: reduce)");
+    if (!window.matchMedia) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => setReduced(preference.matches);
     sync();
     preference.addEventListener("change", sync);
