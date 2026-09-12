@@ -46,12 +46,14 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
     if (!viewport || !firstSet) return;
     let frame = 0;
     let previous = performance.now();
+    let position = viewport.scrollLeft;
     const tick = (now: number) => {
       const elapsed = Math.min(now - previous, 32);
       previous = now;
-      viewport.scrollLeft += elapsed * 0.016;
+      position += elapsed * 0.016;
       const boundary = firstSet.offsetWidth + 24;
-      if (viewport.scrollLeft >= boundary) viewport.scrollLeft -= boundary;
+      if (position >= boundary) position -= boundary;
+      viewport.scrollLeft = position;
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

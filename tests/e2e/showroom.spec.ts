@@ -51,6 +51,21 @@ test("featured curation is an accessible pausable rail", async ({ page }) => {
   await expect(rail.getByRole("button", { name: /reproduzir movimento/i })).toBeVisible();
 });
 
+test("featured curation advances automatically while autoplay is running", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const rail = page.getByRole("region", { name: "Curadoria em destaque" });
+  await rail.scrollIntoViewIfNeeded();
+  await page.mouse.move(1, 1);
+  await expect(rail).toHaveAttribute("data-autoplay", "running");
+
+  const viewport = rail.locator(".watch-rail-viewport");
+  const initialPosition = await viewport.evaluate((element) => element.scrollLeft);
+  await expect
+    .poll(() => viewport.evaluate((element) => element.scrollLeft), { timeout: 2_000 })
+    .toBeGreaterThan(initialPosition + 5);
+});
+
 test("motion responds to preference changes and keyboard focus", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
