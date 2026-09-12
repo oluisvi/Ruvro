@@ -301,3 +301,100 @@
   .watch-rail-viewport { scroll-snap-type:x mandatory !important; }
   .watch-card--compact { scroll-snap-align:start; }
 }
+
+/* Rail/card stabilization: keep the moving catalog aligned and visually consistent. */
+.watch-rail-track,
+.watch-rail-set {
+  align-items:stretch;
+}
+
+.watch-rail-set > .watch-card,
+.page-shell > .watch-grid > .watch-card {
+  height:100%;
+}
+
+.watch-card {
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  align-self:stretch;
+}
+
+.watch-card .watch-card-meta {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:end;
+  min-height:7.6rem;
+}
+
+.watch-card .watch-card-meta > div {
+  min-width:0;
+  display:grid;
+  align-content:end;
+}
+
+.watch-card .watch-card-meta p {
+  min-height:1em;
+  margin:0 0 .35rem;
+}
+
+.watch-card .watch-card-meta h3 {
+  min-height:2em;
+  margin:0;
+  display:flex;
+  align-items:flex-end;
+}
+
+.watch-card .demo-label {
+  align-self:end;
+  white-space:nowrap;
+  padding-bottom:.12rem;
+  transition:
+    opacity 460ms var(--motion-refined-ease),
+    transform 460ms var(--motion-refined-ease);
+}
+
+.watch-card .watch-index {
+  transition:
+    background-color 460ms var(--motion-refined-ease),
+    border-color 460ms var(--motion-refined-ease),
+    transform 460ms var(--motion-refined-ease);
+}
+
+.watch-card--compact .watch-card-meta {
+  min-height:7rem;
+}
+
+.page-shell > .watch-grid {
+  align-items:stretch;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .watch-card:hover .demo-label {
+    opacity:1;
+    transform:translateX(-2px);
+  }
+
+  .watch-card:hover .watch-index {
+    transform:translateY(-2px);
+    border-color:rgba(255,255,255,.62);
+    background:rgba(8,9,8,.36);
+  }
+}
+
+@media(max-width:600px) {
+  .watch-card .watch-card-meta,
+  .watch-card--compact .watch-card-meta {
+    min-height:6.8rem;
+  }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  .watch-card .demo-label,
+  .watch-card .watch-index {
+    transition:none;
+  }
+  .watch-card:hover .demo-label,
+  .watch-card:hover .watch-index {
+    transform:none;
+  }
+}
