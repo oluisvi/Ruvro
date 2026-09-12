@@ -40,15 +40,21 @@ test("reduced motion keeps primary actions visible", async ({ page }) => {
   await expect(rail.locator('[data-rail-set="clone"] a')).toHaveCount(0);
 });
 
-test("featured curation is an accessible pausable rail", async ({ page }) => {
+test("featured curation pauses on hover and resumes when the pointer leaves", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   const rail = page.getByRole("region", { name: "Curadoria em destaque" });
-  await expect(rail).toBeVisible();
-  const control = rail.getByRole("button", { name: /pausar movimento/i });
-  await expect(control).toBeVisible();
-  await control.click();
+  await rail.scrollIntoViewIfNeeded();
+  await expect(rail.getByRole("button", { name: /reproduzir|pausar movimento/i })).toHaveCount(0);
+  await page.mouse.move(1, 1);
+  await expect(rail).toHaveAttribute("data-autoplay", "running");
+
+  const box = await rail.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + Math.min(40, box!.height / 2));
   await expect(rail).toHaveAttribute("data-autoplay", "paused");
-  await expect(rail.getByRole("button", { name: /reproduzir movimento/i })).toBeVisible();
+  await page.mouse.move(1, 1);
+  await expect(rail).toHaveAttribute("data-autoplay", "running");
 });
 
 test("featured curation advances automatically at the refined speed", async ({ page }) => {
@@ -91,11 +97,25 @@ test("featured curation has previous and next controls without disabling autopla
   await expect(rail).toHaveAttribute("data-autoplay", "running");
 });
 
+test("detail scene uses the integrated 360 watch viewer", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const viewer = page.getByRole("region", { name: /visualizador 360 do relógio/i });
+  await viewer.scrollIntoViewIfNeeded();
+  await expect(viewer).toBeVisible();
+  await expect(page.locator(".detail-watch")).toHaveCount(0);
+  const frame = viewer.locator("[data-watch-frame]");
+  const first = await frame.getAttribute("data-watch-frame");
+  await viewer.getByRole("button", { name: /próximo ângulo/i }).click();
+  await expect.poll(() => frame.getAttribute("data-watch-frame")).not.toBe(first);
+});
+
 test("home motion reveals reading units instead of whole sections", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   await expect(page.locator(".manifesto > .section-kicker")).toHaveAttribute("data-motion", "reveal");
   await expect(page.locator(".manifesto > h2")).toHaveAttribute("data-motion-variant", "title");
+  await expect(page.locator(".manifesto > h2")).toHaveCSS("transition-duration", /0\.9|0\.92|920ms/);
   await expect(page.locator(".detail-lines > span").first()).toHaveAttribute("data-motion-variant", "line");
   await expect(page.locator('[data-rail-set="original"] > .watch-card').first()).toHaveAttribute("data-motion-variant", "card");
   await expect(page.locator(".hero-timeline")).not.toHaveAttribute("data-motion");

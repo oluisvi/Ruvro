@@ -15,6 +15,7 @@ const MOTION_GROUPS: MotionGroup[] = [
   { selector: ".manifesto > .section-kicker, .manifesto > h2, .manifesto > p:last-child" },
   { selector: ".featured .section-heading .section-kicker, .featured .section-heading h2, .featured .section-heading > p" },
   { selector: ".watch-rail-toolbar, [data-rail-set=\"original\"] > .watch-card" },
+  { selector: ".watch360-viewer" },
   { selector: ".detail-copy > .section-kicker, .detail-copy > h2, .detail-copy > p, .detail-lines > span" },
   { selector: ".private-scene > div > .section-kicker, .private-scene > div > h2, .private-scene > div > p, .private-scene > div > .button, .private-scene > aside" },
   { selector: ".founders > .section-kicker, .founder-layout > h2, .founder-layout > div" },
@@ -50,14 +51,19 @@ export function SiteMotion() {
     });
 
     let observer: IntersectionObserver | undefined;
-    let initialFrame = 0;
+    let paintFrame = 0;
+    let revealFrame = 0;
+
     const reveal = (node: HTMLElement) => {
       node.dataset.motionState = "visible";
       observer?.unobserve(node);
     };
+
     const configure = () => {
       observer?.disconnect();
-      cancelAnimationFrame(initialFrame);
+      cancelAnimationFrame(paintFrame);
+      cancelAnimationFrame(revealFrame);
+
       if (preference.matches) {
         nodes.forEach(reveal);
         document.body.classList.remove("motion-ready");
@@ -75,26 +81,34 @@ export function SiteMotion() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) reveal(entry.target as HTMLElement);
         });
-      }, { threshold: 0.08, rootMargin: "0px 0px -7% 0px" });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
 
-      initialFrame = requestAnimationFrame(() => {
-        nodes.forEach((node) => {
-          if (node.getBoundingClientRect().top < innerHeight * 0.96 || node.contains(document.activeElement)) reveal(node);
-          else observer?.observe(node);
+      // Two RAFs guarantee the hidden transform/opacity state is painted once
+      // before anything in the initial viewport is moved to the visible state.
+      paintFrame = requestAnimationFrame(() => {
+        revealFrame = requestAnimationFrame(() => {
+          nodes.forEach((node) => {
+            if (node.getBoundingClientRect().top < innerHeight * 0.94 || node.contains(document.activeElement)) reveal(node);
+            else observer?.observe(node);
+          });
         });
       });
     };
+
     const onFocus = (event: FocusEvent) => {
       if (!(event.target instanceof Element)) return;
       const node = event.target.closest<HTMLElement>('[data-motion="reveal"]');
       if (node) reveal(node);
     };
+
     configure();
     preference.addEventListener("change", configure);
     document.addEventListener("focusin", onFocus);
+
     return () => {
       observer?.disconnect();
-      cancelAnimationFrame(initialFrame);
+      cancelAnimationFrame(paintFrame);
+      cancelAnimationFrame(revealFrame);
       preference.removeEventListener("change", configure);
       document.removeEventListener("focusin", onFocus);
       document.body.classList.remove("motion-ready");

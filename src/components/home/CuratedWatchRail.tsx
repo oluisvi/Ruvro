@@ -4,16 +4,8 @@ import { useEffect, useRef, useState, type FocusEvent as ReactFocusEvent, type P
 import type { Watch } from "@/data/watches";
 import { WatchCard } from "@/components/watch/WatchCard";
 
-const AUTOPLAY_SPEED_PX_PER_MS = 0.028;
+const AUTOPLAY_SPEED_PX_PER_MS = 0.03;
 const MANUAL_STEP_PAUSE_MS = 420;
-
-function MotionIcon({ paused }: { paused: boolean }) {
-  return paused ? (
-    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.25 3.5 12 8l-6.75 4.5z" fill="currentColor" /></svg>
-  ) : (
-    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.75 3.5h2v9h-2zm4.5 0h2v9h-2z" fill="currentColor" /></svg>
-  );
-}
 
 function railGap(element: HTMLElement) {
   const style = getComputedStyle(element);
@@ -25,13 +17,13 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
   const viewportRef = useRef<HTMLDivElement>(null);
   const firstSetRef = useRef<HTMLDivElement>(null);
   const stepResumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [explicitPaused, setExplicitPaused] = useState(false);
   const [hoverPaused, setHoverPaused] = useState(false);
   const [focusPaused, setFocusPaused] = useState(false);
+  const [pointerPaused, setPointerPaused] = useState(false);
   const [stepPaused, setStepPaused] = useState(false);
   const [visible, setVisible] = useState(true);
   const [reduced, setReduced] = useState(false);
-  const running = !explicitPaused && !hoverPaused && !focusPaused && !stepPaused && visible && !reduced;
+  const running = !hoverPaused && !focusPaused && !pointerPaused && !stepPaused && visible && !reduced;
 
   useEffect(() => {
     const region = regionRef.current;
@@ -97,6 +89,11 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
     stepResumeTimerRef.current = setTimeout(() => setStepPaused(false), reduced ? 0 : MANUAL_STEP_PAUSE_MS);
   };
 
+  const releasePointerPause = (event: ReactPointerEvent<HTMLElement>) => {
+    setPointerPaused(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+  };
+
   if (watches.length === 0) return null;
 
   return (
@@ -108,16 +105,20 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
       onMouseEnter={() => setHoverPaused(true)}
       onMouseLeave={() => setHoverPaused(false)}
       onFocusCapture={(event: ReactFocusEvent<HTMLElement>) => {
-        const target = event.target instanceof Element ? event.target : null;
-        setFocusPaused(!target?.closest(".watch-rail-toolbar"));
+        const target = event.target instanceof HTMLElement ? event.target : null;
+        if (target?.matches(":focus-visible")) setFocusPaused(true);
       }}
       onBlurCapture={(event: ReactFocusEvent<HTMLElement>) => {
         const nextTarget = event.relatedTarget instanceof Node ? event.relatedTarget : null;
         if (!event.currentTarget.contains(nextTarget)) setFocusPaused(false);
       }}
       onPointerDown={(event: ReactPointerEvent<HTMLElement>) => {
-        if (!(event.target instanceof Element) || !event.target.closest(".watch-rail-toolbar")) setExplicitPaused(true);
+        if (event.target instanceof Element && event.target.closest(".watch-rail-toolbar")) return;
+        setPointerPaused(true);
+        event.currentTarget.setPointerCapture(event.pointerId);
       }}
+      onPointerUp={releasePointerPause}
+      onPointerCancel={releasePointerPause}
     >
       <div className="watch-rail-toolbar">
         <p>Seleção em movimento</p>
@@ -127,10 +128,6 @@ export function CuratedWatchRail({ watches }: { watches: ReadonlyArray<Watch> })
           </button>
           <button type="button" className="rail-step-control rail-step-control--next" onClick={() => stepRail(1)} aria-label="Próximo relógio">
             <span aria-hidden="true">→</span>
-          </button>
-          <button type="button" className="rail-motion-control" onClick={() => setExplicitPaused((value) => !value)} aria-label={explicitPaused ? "Reproduzir movimento" : "Pausar movimento"}>
-            <MotionIcon paused={explicitPaused} />
-            <span>{explicitPaused ? "Reproduzir" : "Pausar"}</span>
           </button>
         </div>
       </div>
