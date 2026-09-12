@@ -1,113 +1,30 @@
 export type WatchStatus = "available" | "reserved" | "sold" | "private" | "demo";
+export type Watch = { slug:string; name:string; edition:string; status:WatchStatus; image:string; alt:string; tone:"graphite"|"steel"|"porcelain"; note:string; facts?:ReadonlyArray<{label:string;value:string}>; gallery?:ReadonlyArray<string>; spinFrames?:ReadonlyArray<string>; sourceLabel?:string };
 
-export type Watch = {
-  slug: string;
-  name: string;
-  edition: string;
-  status: WatchStatus;
-  image: string;
-  alt: string;
-  tone: "graphite" | "steel" | "porcelain";
-  note: string;
-  facts?: ReadonlyArray<{ label: string; value: string }>;
-};
+const SOURCE = "Acervo da comunidade Ruvro";
+const note = "Registro visual de curadoria fornecido pela Ruvro. Disponibilidade e informações comerciais devem ser confirmadas diretamente com a equipe.";
+const gallery = (slug:string,count:number) => Array.from({length:count},(_,index)=>`/media/community/${slug}/gallery-${String(index+1).padStart(2,"0")}.webp`);
+const spins = (slug:string) => Array.from({length:6},(_,index)=>`/media/community/${slug}/spin-${String(index+1).padStart(2,"0")}.webp`);
+function watch(slug:string,name:string,edition:string,galleryCount:number,tone:Watch["tone"]="graphite"):Watch { const images=gallery(slug,galleryCount); return {slug,name,edition,status:"demo",image:images[0],alt:`${name} fotografado para a curadoria Ruvro`,tone,note,gallery:images,spinFrames:spins(slug),sourceLabel:SOURCE}; }
 
-export const watches: ReadonlyArray<Watch> = [
-  {
-    slug: "estudo-nocturne",
-    name: "Nocturne",
-    edition: "Estudo 01",
-    status: "demo",
-    image: "/media/hero-watch.png",
-    alt: "Estudo visual de um relógio de aço com mostrador grafite, sem marca",
-    tone: "graphite",
-    note: "Um estudo de luz, proporção e presença. Conteúdo visual demonstrativo; não representa uma peça em estoque.",
-    facts: [
-      { label: "Material visual", value: "Aço escovado" },
-      { label: "Direção", value: "Mostrador grafite" },
-    ],
-  },
-  {
-    slug: "estudo-meridian",
-    name: "Meridian",
-    edition: "Estudo 02",
-    status: "demo",
-    image: "/media/hero-watch.png",
-    alt: "Estudo editorial de um relógio de aço sob luz clara, sem marca",
-    tone: "steel",
-    note: "Uma leitura mais clara da mesma matéria: superfície, ritmo e precisão em primeiro plano.",
-    facts: [{ label: "Tratamento visual", value: "Aço e luz fria" }],
-  },
-  {
-    slug: "estudo-atelier",
-    name: "Atelier",
-    edition: "Estudo 03",
-    status: "demo",
-    image: "/media/hero-watch.png",
-    alt: "Estudo visual minimalista de um relógio de aço sem marca",
-    tone: "porcelain",
-    note: "Uma composição editorial criada para demonstrar a futura linguagem da curadoria Ruvro.",
-  },
-  {
-    slug: "tudor-pelagos-hawkeye",
-    name: "Pelagos LHD Hawkeye",
-    edition: "Tudor · referência visual",
-    status: "demo",
-    image: "/media/curation/tudor-pelagos-hawkeye.jpeg",
-    alt: "Relógio Tudor Pelagos LHD Hawkeye com mostrador preto em composição escura",
-    tone: "graphite",
-    note: "Registro visual de curadoria fornecido pela Ruvro. Disponibilidade e informações comerciais devem ser confirmadas diretamente com a equipe.",
-  },
-  {
-    slug: "rolex-sky-dweller-blue",
-    name: "Sky-Dweller Blue",
-    edition: "Rolex · referência visual",
-    status: "demo",
-    image: "/media/curation/rolex-sky-dweller-blue.jpeg",
-    alt: "Relógio Rolex Sky-Dweller com mostrador azul sobre expositor claro",
-    tone: "graphite",
-    note: "Registro visual de curadoria fornecido pela Ruvro. Disponibilidade e informações comerciais devem ser confirmadas diretamente com a equipe.",
-  },
-  {
-    slug: "ap-royal-oak-panda",
-    name: "Royal Oak Panda",
-    edition: "Audemars Piguet · referência visual",
-    status: "demo",
-    image: "/media/curation/ap-royal-oak-panda.jpeg",
-    alt: "Relógio Audemars Piguet Royal Oak com mostrador claro e três submostradores escuros",
-    tone: "graphite",
-    note: "Registro visual de curadoria fornecido pela Ruvro. Disponibilidade e informações comerciais devem ser confirmadas diretamente com a equipe.",
-  },
-  {
-    slug: "rolex-submariner-hulk",
-    name: "Submariner Hulk",
-    edition: "Rolex · referência visual",
-    status: "demo",
-    image: "/media/curation/rolex-submariner-hulk.jpeg",
-    alt: "Relógio Rolex Submariner com mostrador e aro verdes sobre expositor claro",
-    tone: "graphite",
-    note: "Registro visual de curadoria fornecido pela Ruvro. Disponibilidade e informações comerciais devem ser confirmadas diretamente com a equipe.",
-  },
-  {
-    slug: "rolex-gmt-batman",
-    name: "GMT-Master II Batman",
-    edition: "Rolex · referência visual",
-    status: "demo",
-    image: "/media/curation/rolex-gmt-batman.jpeg",
-    alt: "Relógio Rolex GMT-Master II com aro azul e preto sobre expositor claro",
-    tone: "graphite",
-    note: "Registro visual de curadoria fornecido pela Ruvro. Disponibilidade e informações comerciais devem ser confirmadas diretamente com a equipe.",
-  },
-  {
-    slug: "rolex-gmt-pepsi",
-    name: "GMT-Master II Pepsi",
-    edition: "Rolex · referência visual",
-    status: "demo",
-    image: "/media/curation/rolex-gmt-pepsi.jpeg",
-    alt: "Relógio Rolex GMT-Master II com aro azul e vermelho sobre expositor claro",
-    tone: "graphite",
-    note: "Registro visual de curadoria fornecido pela Ruvro. Disponibilidade e informações comerciais devem ser confirmadas diretamente com a equipe.",
-  },
+export const watches:ReadonlyArray<Watch> = [
+  watch("vacheron-constantin-222","222","Vacheron Constantin · referência visual",5,"steel"),
+  watch("breitling-navitimer","Navitimer","Breitling · referência visual",3,"steel"),
+  watch("iwc-pilots-watch-chronograph","Pilot’s Watch Chronograph","IWC Schaffhausen · referência visual",3),
+  watch("omega-aqua-terra-worldtimer","Seamaster Aqua Terra Worldtimer","Omega · referência visual",2),
+  watch("rolex-cosmograph-daytona","Cosmograph Daytona","Rolex · referência visual",2,"porcelain"),
+  watch("audemars-piguet-royal-oak-offshore","Royal Oak Offshore Chronograph","Audemars Piguet · referência visual",1),
+  watch("iwc-portofino-moon-phase","Portofino Moon Phase","IWC Schaffhausen · referência visual",3),
+  watch("iwc-pilots-watch-turquoise","Pilot’s Watch Chronograph Turquoise","IWC Schaffhausen · referência visual",3),
+  watch("cartier-automatic","Automatic","Cartier · referência visual",3,"porcelain"),
+  watch("rolex-sea-dweller","Sea-Dweller","Rolex · referência visual",1),
+  watch("jaeger-lecoultre-geographic","Master Control Geographic","Jaeger-LeCoultre · referência visual",3,"porcelain"),
+  watch("heuer-vintage-chronograph-a","Vintage Chronograph · leitura I","Heuer · referência visual",3),
+  watch("jaeger-lecoultre-master-ultra-thin-moon","Master Ultra Thin Moon","Jaeger-LeCoultre · referência visual",2),
+  watch("heuer-vintage-chronograph-b","Vintage Chronograph · leitura II","Heuer · referência visual",3),
+  watch("h-moser-streamliner","Streamliner","H. Moser & Cie. · referência visual",3),
+  watch("rolex-perpetual-1908","Perpetual 1908","Rolex · referência visual",1,"porcelain"),
 ] as const;
 
-export const featuredWatches: ReadonlyArray<Watch> = watches.slice(3);
+const featuredSlugs = ["vacheron-constantin-222","breitling-navitimer","iwc-pilots-watch-chronograph","omega-aqua-terra-worldtimer","rolex-cosmograph-daytona","audemars-piguet-royal-oak-offshore"] as const;
+export const featuredWatches:ReadonlyArray<Watch> = featuredSlugs.map((slug)=>{const selected=watches.find((candidate)=>candidate.slug===slug);if(!selected)throw new Error(`Featured watch not found: ${slug}`);return selected;});
