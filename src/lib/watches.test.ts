@@ -14,12 +14,12 @@ describe("demonstration catalogue", () => {
 
   it("includes six unique supplied references in the featured curation", () => {
     expect(featuredWatches.map((watch) => watch.slug)).toEqual([
-      "tudor-pelagos-hawkeye",
-      "rolex-sky-dweller-blue",
-      "ap-royal-oak-panda",
-      "rolex-submariner-hulk",
-      "rolex-gmt-batman",
-      "rolex-gmt-pepsi",
+      "vacheron-constantin-222",
+      "breitling-navitimer",
+      "iwc-pilots-watch-chronograph",
+      "omega-aqua-terra-worldtimer",
+      "rolex-cosmograph-daytona",
+      "audemars-piguet-royal-oak-offshore",
     ]);
     expect(new Set(featuredWatches.map((watch) => watch.image)).size).toBe(6);
   });

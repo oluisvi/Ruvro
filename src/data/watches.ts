@@ -24,6 +24,7 @@ export const watches:ReadonlyArray<Watch> = [
   watch("heuer-vintage-chronograph-b","Vintage Chronograph · leitura II","Heuer · referência visual",3),
   watch("h-moser-streamliner","Streamliner","H. Moser & Cie. · referência visual",3),
   watch("rolex-perpetual-1908","Perpetual 1908","Rolex · referência visual",1,"porcelain"),
+  {slug:"estudo-nocturne",name:"Nocturne",edition:"Estudo editorial",status:"demo",image:"/media/hero-watch.png",alt:"Estudo visual de um relógio de aço com mostrador grafite",tone:"graphite",note:"Um estudo de luz, proporção e presença. Conteúdo visual demonstrativo; não representa uma peça em estoque."},
 ] as const;
 
 const featuredSlugs = ["vacheron-constantin-222","breitling-navitimer","iwc-pilots-watch-chronograph","omega-aqua-terra-worldtimer","rolex-cosmograph-daytona","audemars-piguet-royal-oak-offshore"] as const;
