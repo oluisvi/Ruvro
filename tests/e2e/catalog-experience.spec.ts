@@ -20,6 +20,7 @@ test("watch detail exposes the supplied multi-angle viewer", async ({ page }) =>
   await page.goto("/watch/vacheron-constantin-222");
   const viewer = page.getByRole("region", { name: /visualização 360/i });
   await expect(viewer).toBeVisible();
+  await expect(page.getByRole("region", { name: "Galeria fotográfica" })).toHaveCount(0);
   await expect(viewer).toContainText("01 / 06");
   await viewer.getByRole("button", { name: /próximo ângulo/i }).click();
   await expect(viewer).toContainText("02 / 06");

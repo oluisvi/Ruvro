@@ -1,2 +1,0 @@
-import Image from "next/image";
-export function WatchGallery({images,alt}:{images:ReadonlyArray<string>;alt:string}) { if(images.length<2)return null;return <section className="watch-gallery" aria-label="Galeria fotográfica">{images.map((src,index)=><figure key={src} className={index===0?"watch-gallery__lead":undefined}><Image src={src} alt={`${alt} — fotografia ${index+1}`} fill sizes="(max-width: 700px) 92vw, (max-width: 1100px) 45vw, 34vw"/></figure>)}</section> }
