@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("curation rail keeps flowing, pauses on hover, then resumes", async ({ page }) => {
+test("curation rail keeps flowing while hovered", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
 
@@ -17,16 +17,10 @@ test("curation rail keeps flowing, pauses on hover, then resumes", async ({ page
   const box = await rail.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.move(box!.x + box!.width / 2, box!.y + Math.min(80, box!.height / 2));
-  await expect(rail).toHaveAttribute("data-autoplay", "paused");
-  const pausedAt = await viewport.evaluate((element) => element.scrollLeft);
-  await page.waitForTimeout(350);
-  const stillPaused = await viewport.evaluate((element) => element.scrollLeft);
-  expect(Math.abs(stillPaused - pausedAt)).toBeLessThan(2);
-
-  await page.mouse.move(1, 1);
   await expect(rail).toHaveAttribute("data-autoplay", "running");
+  const hoveredAt = await viewport.evaluate((element) => element.scrollLeft);
   await expect.poll(() => viewport.evaluate((element) => element.scrollLeft), { timeout: 1_200 })
-    .toBeGreaterThan(stillPaused + 12);
+    .toBeGreaterThan(hoveredAt + 12);
 });
 
 test("rail arrows move one card and continuous flow resumes", async ({ page }) => {

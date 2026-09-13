@@ -40,7 +40,7 @@ test("reduced motion keeps primary actions visible", async ({ page }) => {
   await expect(rail.locator('[data-rail-set="clone"] a')).toHaveCount(0);
 });
 
-test("featured curation pauses on hover and resumes when the pointer leaves", async ({ page }) => {
+test("featured curation keeps moving while the pointer is over it", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   const rail = page.getByRole("region", { name: "Curadoria em destaque" });
@@ -52,9 +52,11 @@ test("featured curation pauses on hover and resumes when the pointer leaves", as
   const box = await rail.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.move(box!.x + box!.width / 2, box!.y + Math.min(40, box!.height / 2));
-  await expect(rail).toHaveAttribute("data-autoplay", "paused");
-  await page.mouse.move(1, 1);
   await expect(rail).toHaveAttribute("data-autoplay", "running");
+  const viewport = rail.locator(".watch-rail-viewport");
+  const hoveredAt = await viewport.evaluate((element) => element.scrollLeft);
+  await expect.poll(() => viewport.evaluate((element) => element.scrollLeft), { timeout: 1_200 })
+    .toBeGreaterThan(hoveredAt + 12);
 });
 
 test("featured curation advances automatically at the refined speed", async ({ page }) => {
